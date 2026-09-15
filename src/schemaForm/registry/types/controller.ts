@@ -3,7 +3,7 @@ import type { BaseRegistryEntity, PropsField } from './base';
 
 type ControllerFor<Control extends keyof ControllerPropsMap> = BaseRegistryEntity<'controller'> & {
   control: Control;
-  name: string;
+  scope: string;
   label?: string;
 } & PropsField<Omit<ControllerPropsMap[Control], 'name' | 'label' | 'control'>>;
 

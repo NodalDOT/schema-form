@@ -10,7 +10,7 @@ export const baseRegistry: Registry = {
         {
           type: 'controller',
           control: 'Input',
-          name: 'test',
+          scope: '#/properties/test',
           label: 'Test field',
         },
         {
@@ -26,7 +26,7 @@ export const baseRegistry: Registry = {
     {
       type: 'controller',
       control: 'Input',
-      name: 'test',
+      scope: '#/properties/test',
       label: 'Test field',
     },
   ],

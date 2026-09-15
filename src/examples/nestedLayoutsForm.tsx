@@ -19,8 +19,8 @@ const profileUiSchema: UiSchema = {
       layout: 'BaseLayout',
       props: { title: 'Personal info' },
       children: [
-        { type: 'controller', control: 'Input', name: 'firstName', label: 'First name' },
-        { type: 'controller', control: 'Input', name: 'lastName', label: 'Last name' },
+        { type: 'controller', control: 'Input', scope: '#/properties/firstName', label: 'First name' },
+        { type: 'controller', control: 'Input', scope: '#/properties/lastName', label: 'Last name' },
       ],
     },
     {
@@ -28,11 +28,11 @@ const profileUiSchema: UiSchema = {
       layout: 'BaseLayout',
       props: { title: 'Preferences' },
       children: [
-        { type: 'controller', control: 'Checkbox', name: 'newsletter', label: 'Subscribe to newsletter' },
+        { type: 'controller', control: 'Checkbox', scope: '#/properties/newsletter', label: 'Subscribe to newsletter' },
         {
           type: 'controller',
           control: 'Radio',
-          name: 'theme',
+          scope: '#/properties/theme',
           label: 'Theme',
           props: {
             options: [

@@ -5,6 +5,8 @@ import type { ReactElement, Ref } from 'react';
 export type BaseControllerProps = {
   name: string;
   control: Control<FieldValues>;
+  disabled?: boolean;
+  readOnly?: boolean;
 };
 
 type FieldRenderProps = {
@@ -20,11 +22,12 @@ type BaseControllerComponentProps = BaseControllerProps & {
   render: (props: FieldRenderProps) => ReactElement;
 };
 
-const BaseController = ({ name, control, render }: BaseControllerComponentProps): ReactElement => {
+const BaseController = ({ name, control, disabled, render }: BaseControllerComponentProps): ReactElement => {
   return (
     <Controller
       name={name}
       control={control}
+      disabled={disabled}
       render={({ field, fieldState }) => (
         <>
           {render({

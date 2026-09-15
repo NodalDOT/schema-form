@@ -11,11 +11,12 @@ export type RadioProps = BaseControllerProps & {
   options: RadioOption[];
 };
 
-const Radio = ({ name, control, label, options }: RadioProps) => {
+const Radio = ({ name, control, label, options, disabled, readOnly }: RadioProps) => {
   return (
     <BaseController
       name={name}
       control={control}
+      disabled={disabled}
       render={({ name, value, onChange, onBlur, ref, invalid }) => (
         <fieldset>
           <legend>{label}</legend>
@@ -26,10 +27,13 @@ const Radio = ({ name, control, label, options }: RadioProps) => {
                 name={name}
                 value={option.value}
                 checked={value === option.value}
-                onChange={() => onChange(option.value)}
+                onChange={() => !readOnly && onChange(option.value)}
+                onClick={(event) => readOnly && event.preventDefault()}
                 onBlur={onBlur}
                 ref={index === 0 ? ref : undefined}
+                disabled={disabled}
                 aria-invalid={invalid}
+                aria-readonly={readOnly}
               />
               {option.label}
             </label>

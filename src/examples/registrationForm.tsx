@@ -18,19 +18,19 @@ const registrationUiSchema: UiSchema = {
     {
       type: 'controller',
       control: 'Input',
-      name: 'login',
+      scope: '#/properties/login',
       label: 'Login',
     },
     {
       type: 'controller',
       control: 'NumberInput',
-      name: 'age',
+      scope: '#/properties/age',
       label: 'Age',
     },
     {
       type: 'controller',
       control: 'Radio',
-      name: 'plan',
+      scope: '#/properties/plan',
       label: 'Plan',
       props: {
         options: [
@@ -43,13 +43,13 @@ const registrationUiSchema: UiSchema = {
     {
       type: 'controller',
       control: 'Textarea',
-      name: 'bio',
+      scope: '#/properties/bio',
       label: 'About you',
     },
     {
       type: 'controller',
       control: 'Checkbox',
-      name: 'agree',
+      scope: '#/properties/agree',
       label: 'I agree to the terms',
     },
     {

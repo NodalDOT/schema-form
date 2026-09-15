@@ -1,15 +1,19 @@
+import { renderItems } from '../../uiSchema/renderer.tsx';
+import type { LayoutChild } from '../types/layout.ts';
 
-export type BaseLayoutProps = {
-  children: React.ReactNode;
+export type BaseLayoutOwnProps = {
   title?: string;
+};
 
+export type BaseLayoutProps = BaseLayoutOwnProps & {
+  children: LayoutChild[];
 };
 
 const BaseLayout = ({ children, title }: BaseLayoutProps) => {
   return (
     <div>
       <p>{ title }</p>
-      {children}
+      {renderItems(children)}
     </div>
   );
 };

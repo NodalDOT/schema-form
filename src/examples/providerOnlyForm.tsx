@@ -12,7 +12,7 @@ const feedbackUiSchema: UiSchema = {
   layout: 'BaseLayout',
   props: { title: 'Feedback' },
   children: [
-    { type: 'controller', control: 'Textarea', name: 'message', label: 'Your message' },
+    { type: 'controller', control: 'Textarea', scope: '#/properties/message', label: 'Your message' },
     { type: 'action', actionType: 'submit', label: 'Send' },
   ],
 };

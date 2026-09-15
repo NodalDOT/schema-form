@@ -2,6 +2,7 @@
 import { createContext, useContext, useMemo } from 'react';
 import { baseRegistry, type Registry } from './registry/index.ts';
 import { useForm, type FieldValues, type SubmitHandler, type UseFormProps, type UseFormReturn } from 'react-hook-form';
+import type { SchemaObject } from 'ajv';
 import type { UiSchema } from './uiSchema/index.ts';
 import { ajvResolverRu, getDefaultValues, type ValidationSchemaProps } from './validation/index.ts';
 
@@ -10,6 +11,7 @@ type SchemaFormContextValue<TFieldValues extends FieldValues = FieldValues> = {
   uiSchema: UiSchema;
   onSubmit?: SubmitHandler<TFieldValues>;
   form: UseFormReturn<TFieldValues>;
+  jsonSchema?: SchemaObject;
 };
 
 
@@ -39,8 +41,9 @@ export function SchemaFormProvider<TFieldValues extends FieldValues = FieldValue
       uiSchema,
       onSubmit,
       form,
+      jsonSchema: props.jsonSchema,
     }),
-    [registry, uiSchema, onSubmit, form],
+    [registry, uiSchema, onSubmit, form, props.jsonSchema],
   );
 
   return (

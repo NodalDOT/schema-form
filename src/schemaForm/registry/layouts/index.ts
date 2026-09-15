@@ -1,10 +1,14 @@
-import type { ComponentProps } from 'react';
+import ArrayLayout from './ArrayLayout';
+import type { ArrayLayoutOwnProps } from './ArrayLayout';
 import BaseLayout from './BaseLayout';
+import type { BaseLayoutOwnProps } from './BaseLayout';
 
 export const layouts = {
   BaseLayout,
+  Array: ArrayLayout,
 } as const;
 
 export type LayoutPropsMap = {
-  [Name in keyof typeof layouts]: ComponentProps<(typeof layouts)[Name]>;
+  BaseLayout: BaseLayoutOwnProps;
+  Array: ArrayLayoutOwnProps;
 };

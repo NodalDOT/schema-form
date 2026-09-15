@@ -28,8 +28,7 @@ const SchemaFormFields = () => {
 };
 
 export function SchemaForm<TFieldValues extends FieldValues = FieldValues>(props: SchemaFormProps<TFieldValues>) {
-  const { registry = baseRegistry, jsonSchema, uiSchema, resolver, onSubmit } = props
-  const validationProps = { jsonSchema, resolver } as ValidationSchemaProps<TFieldValues>;
+  const { registry = baseRegistry, uiSchema, onSubmit, ...validationProps } = props
 
   return (
     <SchemaFormProvider<TFieldValues>

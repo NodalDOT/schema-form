@@ -3,7 +3,7 @@ import type { Action } from './action';
 import type { BaseRegistryEntity, PropsField } from './base';
 import type { Controller } from './controller';
 
-type LayoutChild = Layout | Controller | Action;
+export type LayoutChild = Layout | Controller | Action;
 
 type LayoutFor<Name extends keyof LayoutPropsMap> = BaseRegistryEntity<'layout'> & {
   layout: Name;
