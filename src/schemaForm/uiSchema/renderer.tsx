@@ -1,8 +1,11 @@
 import type { ComponentType, ReactElement } from 'react';
+import { useWatch } from 'react-hook-form';
 import { useSchemaForm } from '../SchemaFormProvider';
 import { useFieldName } from '../hooks/index.ts';
+import { matchesCondition } from '../rules/index.ts';
 import { assertNever } from '../utils/index.ts';
 import type { Controller } from '../registry/types/index.ts';
+import type { Rule } from '../rules/index.ts';
 import type { UiSchemaNode } from './types/index.ts';
 
 export const renderItems = (items: UiSchemaNode[]): ReactElement[] =>
@@ -15,6 +18,10 @@ function withInherited<T extends { readOnly?: boolean; disabled?: boolean }>(
 ): T {
   if (!readOnly && !disabled) return node;
   return { ...node, readOnly: readOnly || node.readOnly, disabled: disabled || node.disabled };
+}
+
+function withDisabled<T extends { disabled?: boolean }>(node: T, disabled: boolean): T {
+  return { ...node, disabled };
 }
 
 const ControllerNode = ({ node }: { node: Controller }): ReactElement => {
@@ -34,7 +41,7 @@ const ControllerNode = ({ node }: { node: Controller }): ReactElement => {
   );
 };
 
-export const Renderer = ({ node }: { node: UiSchemaNode }): ReactElement => {
+const ResolvedNode = ({ node }: { node: UiSchemaNode }): ReactElement => {
   const { registry } = useSchemaForm();
 
   switch (node.type) {
@@ -56,3 +63,31 @@ export const Renderer = ({ node }: { node: UiSchemaNode }): ReactElement => {
       return assertNever(node);
   }
 };
+
+const RuleGate = ({ node, rule }: { node: UiSchemaNode; rule: Rule }): ReactElement | null => {
+  const { form } = useSchemaForm();
+  const watchedName = useFieldName(rule.condition.scope);
+  const watchedValue = useWatch({ control: form.control, name: watchedName, exact: true });
+  const matches = matchesCondition(rule.condition.schema, watchedValue);
+  const { rule: _rule, ...rest } = node;
+
+  switch (rule.effect) {
+    case 'HIDE':
+      return matches ? null : <ResolvedNode node={rest} />;
+
+    case 'SHOW':
+      return matches ? <ResolvedNode node={rest} /> : null;
+
+    case 'DISABLE':
+      return <ResolvedNode node={withDisabled(rest, matches || Boolean(rest.disabled))} />;
+
+    case 'ENABLE':
+      return <ResolvedNode node={withDisabled(rest, !matches || Boolean(rest.disabled))} />;
+
+    default:
+      return assertNever(rule.effect);
+  }
+};
+
+export const Renderer = ({ node }: { node: UiSchemaNode }): ReactElement | null =>
+  node.rule ? <RuleGate node={node} rule={node.rule} /> : <ResolvedNode node={node} />;

@@ -1,6 +1,7 @@
 import { RegistrationForm } from './examples/registrationForm.tsx';
 import { NestedLayoutsForm } from './examples/nestedLayoutsForm.tsx';
 import { ProviderOnlyForm } from './examples/providerOnlyForm.tsx';
+import { RulesForm } from './examples/rulesForm.tsx';
 
 function App() {
   return (
@@ -15,6 +16,9 @@ function App() {
 
       <h2>3. SchemaFormProvider only (custom composition)</h2>
       <ProviderOnlyForm />
+
+      <h2>4. Conditional rules</h2>
+      <RulesForm />
     </>
   )
 }

@@ -32,11 +32,12 @@
 
 ## Условная логика (rules)
 
-- [ ] `item.rule = { effect: HIDE | SHOW | DISABLE | ENABLE, condition: { scope, schema } }` —
-      показать/скрыть/задизейблить поле по значению другого поля (условие — кусок JSON
-      Schema, проверяется через ajv на `useWatch`)
-
-
+- [x] `node.rule = { effect: HIDE | SHOW | DISABLE | ENABLE, condition: { scope, schema } }` —
+      любой узел uiSchema; условие — кусок JSON Schema, компилируется ajv и кэшируется
+      по ссылке на объект схемы. `Renderer` перед обычным рендером узла проверяет `rule` в
+      отдельном компоненте `RuleGate` (там безусловно вызываются хуки), и по эффекту либо
+      возвращает `null`, либо докидывает `disabled` тому же механизму каскадирования, что
+      уже был для `readOnly`/`disabled`. Пример — `src/examples/rulesForm.tsx`
 
 ## Registry
 
