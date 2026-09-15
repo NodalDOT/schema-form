@@ -7,7 +7,7 @@ import type { UiSchema } from './uiSchema/index.ts';
 import { ajvResolverRu, getDefaultValues, type ValidationSchemaProps } from './validation/index.ts';
 
 type SchemaFormContextValue<TFieldValues extends FieldValues = FieldValues> = {
-  registry?: Registry;
+  registry: Registry;
   uiSchema: UiSchema;
   onSubmit?: SubmitHandler<TFieldValues>;
   form: UseFormReturn<TFieldValues>;

@@ -12,3 +12,5 @@ export type LayoutPropsMap = {
   BaseLayout: BaseLayoutOwnProps;
   Array: ArrayLayoutOwnProps;
 };
+
+export type LayoutsRegistry = typeof layouts;

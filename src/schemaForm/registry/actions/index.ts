@@ -8,3 +8,5 @@ export const actions = {
 export type ActionPropsMap = {
   [Name in keyof typeof actions]: ComponentProps<(typeof actions)[Name]>;
 };
+
+export type ActionsRegistry = typeof actions;

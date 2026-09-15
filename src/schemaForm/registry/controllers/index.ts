@@ -18,3 +18,5 @@ export type ControllerPropsMap = {
 };
 
 export type ControllerName = keyof ControllerPropsMap;
+
+export type ControllersRegistry = typeof controllers;

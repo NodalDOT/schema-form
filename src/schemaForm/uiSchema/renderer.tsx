@@ -1,7 +1,4 @@
 import type { ComponentType, ReactElement } from 'react';
-import { actions } from '../registry/actions/index.ts';
-import { controllers } from '../registry/controllers/index.ts';
-import { layouts } from '../registry/layouts/index.ts';
 import { useSchemaForm } from '../SchemaFormProvider';
 import { useFieldName } from '../hooks/index.ts';
 import { assertNever } from '../utils/index.ts';
@@ -12,9 +9,9 @@ export const renderItems = (items: UiSchemaNode[]): ReactElement[] =>
   items.map((item, index) => <Renderer key={index} node={item} />);
 
 const ControllerNode = ({ node }: { node: Controller }): ReactElement => {
-  const { form } = useSchemaForm();
+  const { form, registry } = useSchemaForm();
   const name = useFieldName(node.scope);
-  const Control = controllers[node.control] as ComponentType<any>;
+  const Control = registry.controllers[node.control] as ComponentType<any>;
 
   return (
     <Control
@@ -27,9 +24,11 @@ const ControllerNode = ({ node }: { node: Controller }): ReactElement => {
 };
 
 export const Renderer = ({ node }: { node: UiSchemaNode }): ReactElement => {
+  const { registry } = useSchemaForm();
+
   switch (node.type) {
     case 'layout': {
-      const Layout = layouts[node.layout] as ComponentType<any>;
+      const Layout = registry.layouts[node.layout] as ComponentType<any>;
       return <Layout {...node.props} children={node.children} />;
     }
 
@@ -37,7 +36,7 @@ export const Renderer = ({ node }: { node: UiSchemaNode }): ReactElement => {
       return <ControllerNode node={node} />;
 
     case 'action': {
-      const Action = actions[node.actionType];
+      const Action = registry.actions[node.actionType];
       return <Action label={node.label} {...node.props} />;
     }
 
