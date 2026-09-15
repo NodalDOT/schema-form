@@ -1,5 +1,7 @@
 export type BaseRegistryEntity<Type extends string = string> = {
   type: Type;
+  readOnly?: boolean;
+  disabled?: boolean;
 }
 
 type RequiredKeys<T> = { [K in keyof T]-?: {} extends Pick<T, K> ? never : K }[keyof T];

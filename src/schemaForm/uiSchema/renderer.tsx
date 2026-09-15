@@ -8,6 +8,15 @@ import type { UiSchemaNode } from './types/index.ts';
 export const renderItems = (items: UiSchemaNode[]): ReactElement[] =>
   items.map((item, index) => <Renderer key={index} node={item} />);
 
+function withInherited<T extends { readOnly?: boolean; disabled?: boolean }>(
+  node: T,
+  readOnly: boolean | undefined,
+  disabled: boolean | undefined,
+): T {
+  if (!readOnly && !disabled) return node;
+  return { ...node, readOnly: readOnly || node.readOnly, disabled: disabled || node.disabled };
+}
+
 const ControllerNode = ({ node }: { node: Controller }): ReactElement => {
   const { form, registry } = useSchemaForm();
   const name = useFieldName(node.scope);
@@ -19,6 +28,8 @@ const ControllerNode = ({ node }: { node: Controller }): ReactElement => {
       label={node.label ?? ''}
       control={form.control}
       {...node.props}
+      readOnly={node.readOnly}
+      disabled={node.disabled}
     />
   );
 };
@@ -29,7 +40,8 @@ export const Renderer = ({ node }: { node: UiSchemaNode }): ReactElement => {
   switch (node.type) {
     case 'layout': {
       const Layout = registry.layouts[node.layout] as ComponentType<any>;
-      return <Layout {...node.props} children={node.children} />;
+      const children = node.children.map((child) => withInherited(child, node.readOnly, node.disabled));
+      return <Layout {...node.props} readOnly={node.readOnly} disabled={node.disabled} children={children} />;
     }
 
     case 'controller':
@@ -37,7 +49,7 @@ export const Renderer = ({ node }: { node: UiSchemaNode }): ReactElement => {
 
     case 'action': {
       const Action = registry.actions[node.actionType];
-      return <Action label={node.label} {...node.props} />;
+      return <Action label={node.label} {...node.props} disabled={node.disabled} />;
     }
 
     default:

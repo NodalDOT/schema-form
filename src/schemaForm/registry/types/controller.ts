@@ -5,7 +5,7 @@ type ControllerFor<Control extends keyof ControllerPropsMap> = BaseRegistryEntit
   control: Control;
   scope: string;
   label?: string;
-} & PropsField<Omit<ControllerPropsMap[Control], 'name' | 'label' | 'control'>>;
+} & PropsField<Omit<ControllerPropsMap[Control], 'name' | 'label' | 'control' | 'readOnly' | 'disabled'>>;
 
 export type Controller = {
   [Control in keyof ControllerPropsMap]: ControllerFor<Control>;

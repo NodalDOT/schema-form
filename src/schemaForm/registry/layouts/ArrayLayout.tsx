@@ -10,11 +10,11 @@ export type ArrayLayoutOwnProps = {
   addLabel?: string;
   removeLabel?: string;
   defaultItem?: unknown;
-  readOnly?: boolean;
-  disabled?: boolean;
 };
 
 export type ArrayLayoutProps = ArrayLayoutOwnProps & {
+  readOnly?: boolean;
+  disabled?: boolean;
   children: LayoutChild[];
 };
 
