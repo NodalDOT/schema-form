@@ -2,6 +2,7 @@ import { RegistrationForm } from './examples/registrationForm.tsx';
 import { NestedLayoutsForm } from './examples/nestedLayoutsForm.tsx';
 import { ProviderOnlyForm } from './examples/providerOnlyForm.tsx';
 import { RulesForm } from './examples/rulesForm.tsx';
+import { ExtendedRegistryForm } from './examples/extendedRegistryForm.tsx';
 
 function App() {
   return (
@@ -19,6 +20,9 @@ function App() {
 
       <h2>4. Conditional rules</h2>
       <RulesForm />
+
+      <h2>5. Extended registry (custom control)</h2>
+      <ExtendedRegistryForm />
     </>
   )
 }
