@@ -1,12 +1,9 @@
-import type { ControllerPropsMap } from '../controllers';
-import type { BaseRegistryEntity, PropsField } from './base';
+import type { RegistryEntityOf, RegistryMaps } from './base';
 
-type ControllerFor<Control extends keyof ControllerPropsMap> = BaseRegistryEntity<'controller'> & {
-  control: Control;
-  scope: string;
-  label?: string;
-} & PropsField<Omit<ControllerPropsMap[Control], 'name' | 'label' | 'control' | 'readOnly' | 'disabled'>>;
-
-export type Controller = {
-  [Control in keyof ControllerPropsMap]: ControllerFor<Control>;
-}[keyof ControllerPropsMap];
+export type ControllerOf<TRegistry extends RegistryMaps> = RegistryEntityOf<
+  'controller',
+  TRegistry['controllers'],
+  'control',
+  { scope: string; label?: string },
+  'name' | 'label' | 'control' | 'readOnly' | 'disabled'
+>;

@@ -3,7 +3,7 @@ import { useFormState, useWatch } from 'react-hook-form';
 import { useSchemaForm } from '../../SchemaFormProvider';
 import { FormPathProvider, joinFormPath, useFieldName, useSchemaField } from '../../hooks/index.ts';
 import { renderItems } from '../../uiSchema/renderer.tsx';
-import type { LayoutChild } from '../types/layout.ts';
+import type { LayoutChild } from '../types/index.ts';
 
 export type ArrayLayoutOwnProps = {
   scope: string;

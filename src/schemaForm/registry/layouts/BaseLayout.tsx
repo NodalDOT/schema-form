@@ -1,5 +1,5 @@
 import { renderItems } from '../../uiSchema/renderer.tsx';
-import type { LayoutChild } from '../types/layout.ts';
+import type { LayoutChild } from '../types/index.ts';
 
 export type BaseLayoutOwnProps = {
   title?: string;
