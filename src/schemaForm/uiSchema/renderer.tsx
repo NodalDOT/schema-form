@@ -53,7 +53,7 @@ const nodeStrategies: { [K in UiSchemaNode['type']]: NodeStrategy<Extract<UiSche
   controller: (node) => <ControllerNode node={node} />,
 
   action: (node, registry) => {
-    const Action = registry.actions[node.actionType];
+    const Action = registry.actions[node.actionType] as ComponentType<any>;
     return <Action label={node.label} {...node.props} disabled={node.disabled} />;
   },
 };
