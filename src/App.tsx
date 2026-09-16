@@ -4,6 +4,7 @@ import { ProviderOnlyForm } from './examples/providerOnlyForm.tsx';
 import { RulesForm } from './examples/rulesForm.tsx';
 import { ExtendedRegistryForm } from './examples/extendedRegistryForm.tsx';
 import { ActionsForm } from './examples/actionsForm.tsx';
+import { ArrayLayoutForm } from './examples/arrayLayoutForm.tsx';
 
 function App() {
   return (
@@ -27,6 +28,9 @@ function App() {
 
       <h2>6. Actions (generic button, link, pending submit)</h2>
       <ActionsForm />
+
+      <h2>7. Array layout (nested repeatable groups)</h2>
+      <ArrayLayoutForm />
     </>
   )
 }
