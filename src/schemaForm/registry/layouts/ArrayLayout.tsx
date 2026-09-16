@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { useFormState, useWatch } from 'react-hook-form';
+import type { FieldError, FieldErrors } from 'react-hook-form';
 import { useSchemaForm } from '../../SchemaFormProvider';
 import { FormPathProvider, joinFormPath, useFieldName, useSchemaField } from '../../hooks/index.ts';
 import { renderItems } from '../../uiSchema/renderer.tsx';
@@ -24,7 +25,34 @@ function nextRowKey() {
   return `schema-form-array-row-${rowKeySeq}`;
 }
 
-const ArrayLayout = ({ scope, addLabel, removeLabel, defaultItem, readOnly, disabled, children }: ArrayLayoutProps) => {
+function useStableRowKeys(length: number) {
+  const keysRef = useRef<string[]>([]);
+
+  while (keysRef.current.length < length) {
+    keysRef.current.push(nextRowKey());
+  }
+  if (keysRef.current.length > length) {
+    keysRef.current = keysRef.current.slice(0, length);
+  }
+
+  function removeKeyAt(index: number) {
+    keysRef.current.splice(index, 1);
+  }
+
+  return { rowKeys: keysRef.current, removeKeyAt };
+}
+
+function getFieldError(errors: FieldErrors, name: string): FieldError | undefined {
+  const node = name.split('.').reduce<unknown>(
+    (acc, key) => (acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[key] : undefined),
+    errors,
+  );
+  const withRoot = node as (FieldError & { root?: FieldError }) | undefined;
+  return withRoot?.root ?? withRoot;
+}
+
+const ArrayLayout = (props: ArrayLayoutProps) => {
+  const { scope, addLabel, removeLabel, defaultItem, readOnly, disabled, children } = props;
   const { form } = useSchemaForm();
   const name = useFieldName(scope);
   const schemaField = useSchemaField(name);
@@ -34,28 +62,18 @@ const ArrayLayout = ({ scope, addLabel, removeLabel, defaultItem, readOnly, disa
   const watched = useWatch({ control: form.control, name, exact: true });
   const value = (watched as unknown[] | undefined) ?? [];
 
-  const rowKeysRef = useRef<string[]>([]);
-  while (rowKeysRef.current.length < value.length) {
-    rowKeysRef.current.push(nextRowKey());
-  }
-  if (rowKeysRef.current.length > value.length) {
-    rowKeysRef.current = rowKeysRef.current.slice(0, value.length);
-  }
+  const { rowKeys, removeKeyAt } = useStableRowKeys(value.length);
 
   const { errors, isSubmitted } = useFormState({ control: form.control, name });
-  const rawError = name.split('.').reduce<any>((acc, key) => acc?.[key], errors);
-  const arrayError = rawError?.root ?? rawError;
+  const arrayError = getFieldError(errors, name);
 
   function append() {
-    const current = (form.getValues(name) as unknown[]) ?? [];
-    form.setValue(name, [...current, defaultItem ?? {}], { shouldDirty: true });
-    rowKeysRef.current.push(nextRowKey());
+    form.setValue(name, [...value, defaultItem ?? {}], { shouldDirty: true });
   }
 
   function remove(index: number) {
-    const current = (form.getValues(name) as unknown[]) ?? [];
-    form.setValue(name, current.filter((_, i) => i !== index), { shouldDirty: true });
-    rowKeysRef.current.splice(index, 1);
+    form.setValue(name, value.filter((_, i) => i !== index), { shouldDirty: true });
+    removeKeyAt(index);
     if (isSubmitted) form.trigger(name);
   }
 
@@ -66,7 +84,7 @@ const ArrayLayout = ({ scope, addLabel, removeLabel, defaultItem, readOnly, disa
   return (
     <div data-field-name={name}>
       {value.map((_, index) => (
-        <div key={rowKeysRef.current[index]}>
+        <div key={rowKeys[index]}>
           <FormPathProvider value={joinFormPath(name, String(index))}>
             {renderItems(children)}
           </FormPathProvider>
