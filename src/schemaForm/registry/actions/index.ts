@@ -1,10 +1,12 @@
 import type { ComponentProps } from 'react';
 import Submit from './Submit';
 import Button from './Button';
+import LinkAction from './LinkAction';
 
 export const actions = {
   submit: Submit,
   button: Button,
+  link: LinkAction,
 } as const;
 
 export type ActionPropsMap = {
