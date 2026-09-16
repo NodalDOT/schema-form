@@ -3,6 +3,7 @@ import { NestedLayoutsForm } from './examples/nestedLayoutsForm.tsx';
 import { ProviderOnlyForm } from './examples/providerOnlyForm.tsx';
 import { RulesForm } from './examples/rulesForm.tsx';
 import { ExtendedRegistryForm } from './examples/extendedRegistryForm.tsx';
+import { ActionsForm } from './examples/actionsForm.tsx';
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
       <h2>2. Nested layouts</h2>
       <NestedLayoutsForm />
 
-      <h2>3. SchemaFormProvider only (custom composition)</h2>
+      <h2>3. SchemaFormProvider only (custom composition, no &lt;form&gt; wrapper)</h2>
       <ProviderOnlyForm />
 
       <h2>4. Conditional rules</h2>
@@ -23,6 +24,9 @@ function App() {
 
       <h2>5. Extended registry (custom control)</h2>
       <ExtendedRegistryForm />
+
+      <h2>6. Actions (generic button, link, pending submit)</h2>
+      <ActionsForm />
     </>
   )
 }

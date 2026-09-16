@@ -7,11 +7,16 @@ export type SubmitProps = {
 };
 
 const Submit = ({ label, disabled }: SubmitProps) => {
-  const { form } = useSchemaForm();
+  const { form, onSubmit } = useSchemaForm();
   const { isSubmitting } = useFormState({ control: form.control });
 
   return (
-    <button type="submit" disabled={disabled || isSubmitting} aria-busy={isSubmitting}>
+    <button
+      type="button"
+      disabled={disabled || isSubmitting}
+      aria-busy={isSubmitting}
+      onClick={form.handleSubmit(onSubmit ?? (() => {}))}
+    >
       {label}
     </button>
   );

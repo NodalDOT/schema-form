@@ -1,3 +1,4 @@
+import { useFormState } from 'react-hook-form';
 import { SchemaFormProvider, useSchemaForm } from '../schemaForm/SchemaFormProvider';
 import { Renderer } from '../schemaForm/uiSchema/index.ts';
 import type { UiSchema } from '../schemaForm/uiSchema/index.ts';
@@ -31,17 +32,18 @@ const feedbackJsonSchema: JSONSchemaType<FeedbackValues> = {
 };
 
 const CustomFormFields = () => {
-  const { form, uiSchema, onSubmit } = useSchemaForm();
-  const { handleSubmit, reset, formState } = form;
+  const { form, uiSchema } = useSchemaForm();
+  const { reset, control } = form;
+  const { isSubmitting, isValid } = useFormState({ control });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit ?? (() => {}))}>
+    <div>
       <Renderer node={uiSchema} />
-      <p>{formState.isSubmitting ? 'Sending…' : `Valid: ${formState.isValid}`}</p>
+      <p>{isSubmitting ? 'Sending…' : `Valid: ${isValid}`}</p>
       <button type="button" onClick={() => reset()}>
         Reset
       </button>
-    </form>
+    </div>
   );
 };
 
