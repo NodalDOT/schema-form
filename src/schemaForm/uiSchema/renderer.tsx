@@ -3,7 +3,7 @@ import { useWatch } from 'react-hook-form';
 import { useSchemaForm } from '../SchemaFormProvider';
 import { useFieldName } from '../hooks/index.ts';
 import { matchesCondition } from '../rules/index.ts';
-import { assertNever } from '../utils/index.ts';
+import type { Registry } from '../registry/index.ts';
 import type { Controller } from '../registry/types/index.ts';
 import type { Rule } from '../rules/index.ts';
 import type { UiSchemaNode } from './types/index.ts';
@@ -41,27 +41,36 @@ const ControllerNode = ({ node }: { node: Controller }): ReactElement => {
   );
 };
 
+type NodeStrategy<TNode> = (node: TNode, registry: Registry) => ReactElement;
+
+const nodeStrategies: { [K in UiSchemaNode['type']]: NodeStrategy<Extract<UiSchemaNode, { type: K }>> } = {
+  layout: (node, registry) => {
+    const Layout = registry.layouts[node.layout] as ComponentType<any>;
+    const children = node.children.map((child) => withInherited(child, node.readOnly, node.disabled));
+    return <Layout {...node.props} readOnly={node.readOnly} disabled={node.disabled} children={children} />;
+  },
+
+  controller: (node) => <ControllerNode node={node} />,
+
+  action: (node, registry) => {
+    const Action = registry.actions[node.actionType];
+    return <Action label={node.label} {...node.props} disabled={node.disabled} />;
+  },
+};
+
 const ResolvedNode = ({ node }: { node: UiSchemaNode }): ReactElement => {
   const { registry } = useSchemaForm();
+  const render = nodeStrategies[node.type] as NodeStrategy<UiSchemaNode>;
+  return render(node, registry);
+};
 
-  switch (node.type) {
-    case 'layout': {
-      const Layout = registry.layouts[node.layout] as ComponentType<any>;
-      const children = node.children.map((child) => withInherited(child, node.readOnly, node.disabled));
-      return <Layout {...node.props} readOnly={node.readOnly} disabled={node.disabled} children={children} />;
-    }
+type RuleEffectStrategy = (node: UiSchemaNode, matches: boolean) => UiSchemaNode | null;
 
-    case 'controller':
-      return <ControllerNode node={node} />;
-
-    case 'action': {
-      const Action = registry.actions[node.actionType];
-      return <Action label={node.label} {...node.props} disabled={node.disabled} />;
-    }
-
-    default:
-      return assertNever(node);
-  }
+const ruleEffectStrategies: Record<Rule['effect'], RuleEffectStrategy> = {
+  HIDE: (node, matches) => (matches ? null : node),
+  SHOW: (node, matches) => (matches ? node : null),
+  DISABLE: (node, matches) => withDisabled(node, matches || Boolean(node.disabled)),
+  ENABLE: (node, matches) => withDisabled(node, !matches || Boolean(node.disabled)),
 };
 
 const RuleGate = ({ node, rule }: { node: UiSchemaNode; rule: Rule }): ReactElement | null => {
@@ -70,24 +79,12 @@ const RuleGate = ({ node, rule }: { node: UiSchemaNode; rule: Rule }): ReactElem
   const watchedValue = useWatch({ control: form.control, name: watchedName, exact: true });
   const matches = matchesCondition(rule.condition.schema, watchedValue);
   const { rule: _rule, ...rest } = node;
+  const resolved = ruleEffectStrategies[rule.effect](rest, matches);
 
-  switch (rule.effect) {
-    case 'HIDE':
-      return matches ? null : <ResolvedNode node={rest} />;
-
-    case 'SHOW':
-      return matches ? <ResolvedNode node={rest} /> : null;
-
-    case 'DISABLE':
-      return <ResolvedNode node={withDisabled(rest, matches || Boolean(rest.disabled))} />;
-
-    case 'ENABLE':
-      return <ResolvedNode node={withDisabled(rest, !matches || Boolean(rest.disabled))} />;
-
-    default:
-      return assertNever(rule.effect);
-  }
+  return resolved ? <ResolvedNode node={resolved} /> : null;
 };
 
-export const Renderer = ({ node }: { node: UiSchemaNode }): ReactElement | null =>
-  node.rule ? <RuleGate node={node} rule={node.rule} /> : <ResolvedNode node={node} />;
+export const Renderer = ({ node }: { node: UiSchemaNode }): ReactElement | null => {
+  const { rule } = node;
+  return rule ? <RuleGate node={node} rule={rule} /> : <ResolvedNode node={node} />;
+};
